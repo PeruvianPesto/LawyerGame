@@ -20,6 +20,21 @@ public class CourtRecordManager : MonoBehaviour
         DisplayEvidenceList();
     }
 
+    public void AddEvidence(Evidence evidenceToAdd)
+    {
+        evidenceList.Add(evidenceToAdd);
+        DisplayEvidenceList();
+    }   
+
+    public void RemoveEvidence(Evidence evidenceToRemove)
+    {
+        if (evidenceList.Contains(evidenceToRemove))
+        {
+            evidenceList.Remove(evidenceToRemove);
+            DisplayEvidenceList();
+        }
+    }
+
     private void DisplayEvidenceList()
     {
         foreach(Transform child in evidenceButtonContainer)
