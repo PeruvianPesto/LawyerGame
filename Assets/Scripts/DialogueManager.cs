@@ -95,6 +95,12 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("There are choices need to be made here!");
         List<Choice> _choices = story.currentChoices;
 
+        // Clear existing buttons first to prevent duplication
+        foreach (Transform child in optionPanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
         // Create buttons for each available choice
         for (int i = 0; i < _choices.Count; i++)
         {
@@ -108,7 +114,7 @@ public class DialogueManager : MonoBehaviour
         optionPanel.SetActive(true); // Display the choices panel
 
         // Wait until a choice is made
-        yield return new WaitUntil(() => { return choiceSelected != null; });
+        yield return new WaitUntil(() => choiceSelected != null);
 
         AdvanceFromDecision(); // Continue the story after the choice is made
     }
