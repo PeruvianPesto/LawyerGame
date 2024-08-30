@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro; // For using TextMeshPro components
 using UnityEngine;
@@ -11,52 +9,78 @@ public class CourtRecordManager : MonoBehaviour
     public List<Evidence> evidenceList = new List<Evidence>();
 
     // UI elements for displaying the evidence
-    public GameObject evidencePanel; // Panel to display the evidence details
-    public GameObject evidenceButtonPrefab; // Prefab for evidence buttons
-    public Transform evidenceButtonContainer; // Container to hold evidence buttons
+    public GameObject courtRecordPanel; // Panel to display the Court Record
     public TextMeshProUGUI evidenceNameText; // Text element for the evidence name
     public Image evidenceImage; // Image element for the evidence sprite
     public TextMeshProUGUI evidenceDescriptionText; // Text element for the evidence description
+    public Button nextButton; // Button to navigate to the next evidence
+    public Button previousButton; // Button to navigate to the previous evidence
+
+    private int currentEvidenceIndex = 0; // Tracks the currently displayed evidence index
+    private bool isCourtRecordOpen = false; // Tracks if the Court Record is open
+    public DialogueManager dialogueManager; // Reference to the DialogueManager
 
     private void Start()
     {
-        // Display the initial list of evidence when the script starts
-        DisplayEvidenceList();
+        courtRecordPanel.SetActive(false); // Initially hide the Court Record panel
+
+        // Add listeners to the navigation buttons
+        nextButton.onClick.AddListener(ShowNextEvidence);
+        previousButton.onClick.AddListener(ShowPreviousEvidence);
     }
 
-    // Method to add new evidence to the list
-    public void AddEvidence(Evidence evidenceToAdd)
+    private void Update()
     {
-        evidenceList.Add(evidenceToAdd); // Add the evidence to the list
-        DisplayEvidenceList(); // Refresh the evidence display
-    }
-
-    // Method to remove existing evidence from the list
-    public void RemoveEvidence(Evidence evidenceToRemove)
-    {
-        if (evidenceList.Contains(evidenceToRemove)) // Check if the evidence exists in the list
+        // Toggle the Court Record panel with the "E" key
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            evidenceList.Remove(evidenceToRemove); // Remove the evidence from the list
-            DisplayEvidenceList(); // Refresh the evidence display
+            if (!isCourtRecordOpen)
+            {
+                ToggleCourtRecord();
+                dialogueManager.PauseDialogue(); // Pause the dialogue when opening the Court Record
+            }
+            else
+            {
+                ToggleCourtRecord();
+                dialogueManager.ResumeDialogue(); // Resume the dialogue when closing the Court Record
+            }
+
         }
     }
 
-    // Method to display the list of evidence as buttons in the UI
-    private void DisplayEvidenceList()
+    // Toggle the Court Record display
+    private void ToggleCourtRecord()
     {
-        // Clear existing buttons in the evidence container
-        foreach (Transform child in evidenceButtonContainer)
-        {
-            Destroy(child.gameObject); // Destroy each existing button
-        }
+        isCourtRecordOpen = !isCourtRecordOpen; // Toggle the state
+        courtRecordPanel.SetActive(isCourtRecordOpen); // Show or hide the Court Record panel
 
-        // Create a new button for each evidence item in the list
-        foreach (Evidence evidence in evidenceList)
+        if (isCourtRecordOpen)
         {
-            GameObject button = Instantiate(evidenceButtonPrefab, evidenceButtonContainer); // Instantiate the button prefab
-            button.GetComponentInChildren<TextMeshProUGUI>().text = evidence.name; // Set the button text to the evidence name
-            button.GetComponent<Button>().onClick.AddListener(() => DisplayEvidenceDetails(evidence)); // Add a click listener to show evidence details
+            // Display the first evidence when opening the Court Record
+            if (evidenceList.Count > 0)
+            {
+                currentEvidenceIndex = 0; // Start from the first evidence
+                DisplayEvidenceDetails(evidenceList[currentEvidenceIndex]);
+            }
         }
+    }
+
+    // Show the next evidence in the list
+    private void ShowNextEvidence()
+    {
+        if (evidenceList.Count == 0) return; // Exit if no evidence
+
+        currentEvidenceIndex = (currentEvidenceIndex + 1) % evidenceList.Count; // Loop to the first evidence if at the end
+        DisplayEvidenceDetails(evidenceList[currentEvidenceIndex]);
+    }
+
+    // Show the previous evidence in the list
+    private void ShowPreviousEvidence()
+    {
+        if (evidenceList.Count == 0) return; // Exit if no evidence
+
+        currentEvidenceIndex = (currentEvidenceIndex - 1 + evidenceList.Count) % evidenceList.Count; // Loop to the last evidence if at the start
+        DisplayEvidenceDetails(evidenceList[currentEvidenceIndex]);
     }
 
     // Method to display the details of the selected evidence
@@ -65,5 +89,20 @@ public class CourtRecordManager : MonoBehaviour
         evidenceNameText.text = evidence.name; // Set the name text to the evidence's name
         evidenceImage.sprite = evidence.image; // Set the image to the evidence's sprite
         evidenceDescriptionText.text = evidence.description; // Set the description text to the evidence's description
+    }
+
+    // Method to add new evidence to the list
+    public void AddEvidence(Evidence evidenceToAdd)
+    {
+        evidenceList.Add(evidenceToAdd); // Add the evidence to the list
+    }
+
+    // Method to remove existing evidence from the list
+    public void RemoveEvidence(Evidence evidenceToRemove)
+    {
+        if (evidenceList.Contains(evidenceToRemove)) // Check if the evidence exists in the list
+        {
+            evidenceList.Remove(evidenceToRemove); // Remove the evidence from the list
+        }
     }
 }

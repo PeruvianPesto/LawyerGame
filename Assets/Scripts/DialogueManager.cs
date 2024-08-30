@@ -20,6 +20,8 @@ public class DialogueManager : MonoBehaviour
     List<string> tags; // List to store tags parsed from the Ink story
     static Choice choiceSelected; // Currently selected choice by the player
 
+    private bool isPaused = false; // Flag to track if the dialogue is paused
+
     void Start()
     {
         // Initialize the story with the Ink file
@@ -32,6 +34,9 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
+        // Check if the dialogue is paused; if so, don't continue processing updates
+        if (isPaused) return;
+
         // Listen for mouse click input to continue the dialogue
         if (Input.GetMouseButtonDown(0))
         {
@@ -187,5 +192,24 @@ public class DialogueManager : MonoBehaviour
         // Trigger animations on the character
         CharacterScript cs = GameObject.FindObjectOfType<CharacterScript>();
         cs.PlayAnimation(_name);
+    }
+
+    // Method to pause the dialogue
+    public void PauseDialogue()
+    {
+        isPaused = true; // Set the pause flag
+        textBox.SetActive(false); // Hide the dialogue text box
+        optionPanel.SetActive(false); // Hide the option panel
+    }
+
+    // Method to resume the dialogue
+    public void ResumeDialogue()
+    {
+        isPaused = false; // Clear the pause flag
+        textBox.SetActive(true); // Show the dialogue text box
+        if (story.currentChoices.Count > 0) // Check if there are choices to show
+        {
+            optionPanel.SetActive(true); // Show the option panel
+        }
     }
 }
