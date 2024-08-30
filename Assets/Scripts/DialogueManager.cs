@@ -19,6 +19,10 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI message; // TextMeshPro component for the dialogue text
     List<string> tags; // List to store tags parsed from the Ink story
     static Choice choiceSelected; // Currently selected choice by the player
+    [SerializeField] private float typingSpeed = 0.05f; // Adjust this to control typing speed
+    public CourtRecordManager courtRecordManager; // Reference to CourtRecordManager
+
+
 
     private bool isPaused = false; // Flag to track if the dialogue is paused
 
@@ -80,7 +84,7 @@ public class DialogueManager : MonoBehaviour
         foreach (char letter in sentence.ToCharArray())
         {
             message.text += letter;
-            yield return null;
+            yield return new WaitForSeconds(typingSpeed);
         }
 
         // Get reference to the character currently speaking
@@ -149,6 +153,7 @@ public class DialogueManager : MonoBehaviour
         tags = story.currentTags;
         foreach (string t in tags)
         {
+            string[] splitTag = t.Split(' ');
             string prefix = t.Split(' ')[0];
             string param = t.Split(' ')[1];
 
@@ -160,7 +165,34 @@ public class DialogueManager : MonoBehaviour
                 case "color":
                     SetTextColor(param); // Set text color based on the tag
                     break;
+                case "addingevidence":
+                    handleAddingEvidence(splitTag); // Handle adding evidence based on the tag
+                    break;
+            }       
+        }
+    }
+
+    private void handleAddingEvidence(string[] splitTag)
+    {
+        if (splitTag.Length >= 4)
+        {
+            string evidenceName = splitTag[1];
+            string evidenceImagePath = splitTag[2];
+            string evidenceDescription = string.Join(" ", splitTag, 3, splitTag.Length - 3);
+
+            Sprite evidenceSprite = Resources.Load<Sprite>(evidenceImagePath);
+            if (evidenceSprite == null)
+            {
+                Debug.LogWarning($"Could not load evidence sprite at path: {evidenceImagePath}");
+                return;
             }
+
+            Evidence newEvidence = new Evidence(evidenceName, evidenceSprite, evidenceDescription);
+            courtRecordManager.AddEvidence(newEvidence);
+        }
+        else
+        {
+            Debug.LogWarning("Invalid tag format for adding evidence");
         }
     }
 
