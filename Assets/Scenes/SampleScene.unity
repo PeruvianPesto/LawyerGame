@@ -1188,6 +1188,8 @@ MonoBehaviour:
   isTalking: 0
   nametag: {fileID: 774711683}
   message: {fileID: 1238507670}
+  typingSpeed: 0.05
+  courtRecordManager: {fileID: 1233418817}
 --- !u!4 &934994435
 Transform:
   m_ObjectHideFlags: 0
@@ -1586,7 +1588,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: f7ac6547ac72f154689f9bd771481c8c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

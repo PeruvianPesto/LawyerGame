@@ -166,21 +166,22 @@ public class DialogueManager : MonoBehaviour
                     SetTextColor(param); // Set text color based on the tag
                     break;
                 case "addingevidence":
-                    handleAddingEvidence(splitTag); // Handle adding evidence based on the tag
+                    HandleAddingEvidence(splitTag); // Handle adding evidence based on the tag
                     break;
             }       
         }
     }
 
-    private void handleAddingEvidence(string[] splitTag)
+    private void HandleAddingEvidence(string[] splitTag)
     {
         if (splitTag.Length >= 4)
         {
             string evidenceName = splitTag[1];
-            string evidenceImagePath = splitTag[2];
+            string evidenceImagePath = splitTag[2].Trim('\"'); // Remove surrounding quotes
             string evidenceDescription = string.Join(" ", splitTag, 3, splitTag.Length - 3);
 
             Sprite evidenceSprite = Resources.Load<Sprite>(evidenceImagePath);
+
             if (evidenceSprite == null)
             {
                 Debug.LogWarning($"Could not load evidence sprite at path: {evidenceImagePath}");

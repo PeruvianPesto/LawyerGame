@@ -18,7 +18,7 @@ The defense is ready, Your Honor!
 
 I would like to present new evidence to the court!
 
-#addingevidence "Knife" "Evidence/Images/test_image" "This is a knife"
+#addingevidence "Knife" "Sprites/Test" "This is a knife"
 Added Knife to court Record 
 ->DONE
 
