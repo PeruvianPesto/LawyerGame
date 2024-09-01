@@ -16,6 +16,9 @@ public class DialogueManager : MonoBehaviour
     public bool isTalking = false; // Flag indicating if dialogue is currently happening
     private Transform lastFocusedCharacter;
 
+    public bool inCrossExamination = false; // Flag to indicate if the current dialogue is a cross-examination
+    private string correctEvidenceID; // Correct evidence to present during cross-examination
+
     static Story story; // Reference to the Ink story object
     [SerializeField] private TextMeshProUGUI nametag; // TextMeshPro component for the character's name
     [SerializeField] private TextMeshProUGUI message; // TextMeshPro component for the dialogue text
@@ -23,8 +26,6 @@ public class DialogueManager : MonoBehaviour
     static Choice choiceSelected; // Currently selected choice by the player
     [SerializeField] private float typingSpeed = 0.05f; // Adjust this to control typing speed
     public CourtRecordManager courtRecordManager; // Reference to CourtRecordManager
-
-
 
     private bool isPaused = false; // Flag to track if the dialogue is paused
 
@@ -71,11 +72,21 @@ public class DialogueManager : MonoBehaviour
 
     void AdvanceDialogue()
     {
-        // Continue the story and display the next sentence
-        string currentSentence = story.Continue();
-        ParseTags(); // Parse any tags in the current dialogue line
-        StopAllCoroutines(); // Stop any currently running coroutine
-        StartCoroutine(TypeSentence(currentSentence)); // Display the dialogue with typing effect
+        if (story.canContinue)
+        {
+            string currentSentence = story.Continue();
+            ParseTags();
+            StopAllCoroutines();
+            StartCoroutine(TypeSentence(currentSentence));
+        }
+        else if (story.currentChoices.Count > 0)
+        {
+            StartCoroutine(ShowChoices());
+        }
+        else
+        {
+            FinishDialogue();
+        }
     }
 
     IEnumerator TypeSentence(string sentence)
@@ -299,5 +310,38 @@ public class DialogueManager : MonoBehaviour
         {
             optionPanel.SetActive(true); // Show the option panel
         }
+    }
+
+    public void StartCrossExamination(string correctEvidence)
+    {
+        inCrossExamination = true;
+        correctEvidenceID = correctEvidence;
+        AdvanceDialogue();
+    }
+    
+    public void PresentEvidence(string evidenceID)
+    {
+        if(!inCrossExamination)
+        {
+            Debug.LogWarning("Not in cross-examination mode!");
+            return;
+        }
+
+        story.variablesState["presentEvidence"] = evidenceID;
+
+        if (evidenceID == correctEvidenceID)
+        {
+            inCrossExamination = false;
+            story.ChoosePathString("cross_examination_success");
+        }
+        else
+        {
+            AdvanceDialogue();
+        }
+    }
+
+    public void TriggerCrossExamination()
+    {
+        StartCrossExamination("bloody_knife");
     }
 }

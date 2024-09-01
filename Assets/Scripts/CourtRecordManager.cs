@@ -105,4 +105,9 @@ public class CourtRecordManager : MonoBehaviour
             evidenceList.Remove(evidenceToRemove); // Remove the evidence from the list
         }
     }
+
+    public void PresentEvidence(Evidence evidence)
+    {
+        dialogueManager.PresentEvidence(evidence.name); // Call the PresentEvidence method in the DialogueManager
+    }
 }
