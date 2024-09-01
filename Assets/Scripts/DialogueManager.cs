@@ -5,6 +5,7 @@ using TMPro;
 using Ink.Runtime;
 using UnityEngine.UI;
 using System;
+using Unity.VisualScripting;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class DialogueManager : MonoBehaviour
     public GameObject customButton; // Template for creating choice buttons
     public GameObject optionPanel; // Panel containing choice buttons
     public bool isTalking = false; // Flag indicating if dialogue is currently happening
+    private Transform lastFocusedCharacter;
 
     static Story story; // Reference to the Ink story object
     [SerializeField] private TextMeshProUGUI nametag; // TextMeshPro component for the character's name
@@ -47,7 +49,7 @@ public class DialogueManager : MonoBehaviour
             if (story.canContinue)
             {
                 // Set the nametag and advance the dialogue
-                nametag.text = "Lawyer";
+                //nametag.text = "Lawyer";
                 AdvanceDialogue();
 
                 if (story.currentChoices.Count != 0)
@@ -154,10 +156,10 @@ public class DialogueManager : MonoBehaviour
         foreach (string t in tags)
         {
             string[] splitTag = t.Split(' ');
-            string prefix = t.Split(' ')[0];
-            string param = t.Split(' ')[1];
+            string prefix = splitTag[0].ToLower();
+            string param = splitTag.Length > 1 ? splitTag[1] : "";
 
-            switch (prefix.ToLower())
+            switch (prefix)
             {
                 case "anim":
                     SetAnimation(param); // Set animation based on the tag
@@ -168,7 +170,49 @@ public class DialogueManager : MonoBehaviour
                 case "addingevidence":
                     HandleAddingEvidence(splitTag); // Handle adding evidence based on the tag
                     break;
-            }       
+                case "speaker":
+                    SetSpeakerName(param); // Set speaker name based on the tag
+                    break;
+            }
+        }
+    }
+
+    private void SetSpeakerName(string name)
+    {
+        nametag.text = name;
+
+        // Handle the case where the #speaker tag is followed by a blank
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            if (lastFocusedCharacter != null)
+            {
+                // Focus on the last character the camera was focused on
+                CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
+                if (cameraFocus != null)
+                {
+                    cameraFocus.FocusOnCharacter(lastFocusedCharacter);
+                }
+            }
+            return;
+        }
+
+        // Find the character GameObject by name
+        GameObject speakerObject = GameObject.Find(name);
+        if (speakerObject != null)
+        {
+            // Update last focused character
+            lastFocusedCharacter = speakerObject.transform;
+
+            // Set the camera to focus on the current speaker
+            CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
+            if (cameraFocus != null)
+            {
+                cameraFocus.FocusOnCharacter(speakerObject.transform);
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Speaker GameObject with the name '{name}' not found.");
         }
     }
 
@@ -220,11 +264,22 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    void SetAnimation(string _name)
+    void SetAnimation(string animationName)
     {
-        // Trigger animations on the character
-        CharacterScript cs = GameObject.FindObjectOfType<CharacterScript>();
-        cs.PlayAnimation(_name);
+        // Assuming each character has a CharacterScript attached to their GameObject
+        CharacterScript currentSpeaker = GameObject.FindObjectOfType<CharacterScript>();
+        currentSpeaker.PlayAnimation(animationName);
+
+        // Ensure the camera focuses on the character only if they are talking
+        if (currentSpeaker.isTalking)
+        {
+            // Set the camera to focus on the current speaker
+            CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
+            if (cameraFocus != null)
+            {
+                cameraFocus.FocusOnCharacter(currentSpeaker.transform);
+            }
+        }
     }
 
     // Method to pause the dialogue
