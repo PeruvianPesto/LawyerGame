@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro; // For using TextMeshPro components
 using UnityEngine;
@@ -15,6 +16,7 @@ public class CourtRecordManager : MonoBehaviour
     public TextMeshProUGUI evidenceDescriptionText; // Text element for the evidence description
     public Button nextButton; // Button to navigate to the next evidence
     public Button previousButton; // Button to navigate to the previous evidence
+    public Button presentButton; // Button to present the evidence
 
     private int currentEvidenceIndex = 0; // Tracks the currently displayed evidence index
     private bool isCourtRecordOpen = false; // Tracks if the Court Record is open
@@ -27,6 +29,7 @@ public class CourtRecordManager : MonoBehaviour
         // Add listeners to the navigation buttons
         nextButton.onClick.AddListener(ShowNextEvidence);
         previousButton.onClick.AddListener(ShowPreviousEvidence);
+        presentButton.onClick.AddListener(PresentEvidence);
     }
 
     private void Update()
@@ -106,8 +109,25 @@ public class CourtRecordManager : MonoBehaviour
         }
     }
 
-    public void PresentEvidence(Evidence evidence)
+    public void PresentEvidence()
     {
-        dialogueManager.PresentEvidence(evidence.name); // Call the PresentEvidence method in the DialogueManager
+        if (isCourtRecordOpen && dialogueManager.isInCrossExamination)
+        {
+            Evidence selectedEvidence = GetCurrentEvidence();
+
+            if (selectedEvidence != null)
+            {
+                dialogueManager.PresentEvidence(selectedEvidence);
+            }
+        }
+    }
+
+    public Evidence GetCurrentEvidence()
+    {
+        if (evidenceList.Count > 0)
+        {
+            return evidenceList[currentEvidenceIndex];
+        }
+        return null;
     }
 }

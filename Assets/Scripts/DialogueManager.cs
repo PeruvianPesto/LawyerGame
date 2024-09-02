@@ -16,8 +16,8 @@ public class DialogueManager : MonoBehaviour
     public bool isTalking = false; // Flag indicating if dialogue is currently happening
     private Transform lastFocusedCharacter;
 
-    public bool inCrossExamination = false; // Flag to indicate if the current dialogue is a cross-examination
-    private string correctEvidenceID; // Correct evidence to present during cross-examination
+    public string correctEvidenceName;
+    public bool isInCrossExamination = false;
 
     static Story story; // Reference to the Ink story object
     [SerializeField] private TextMeshProUGUI nametag; // TextMeshPro component for the character's name
@@ -184,6 +184,9 @@ public class DialogueManager : MonoBehaviour
                 case "speaker":
                     SetSpeakerName(param); // Set speaker name based on the tag
                     break;
+                case "cross_examination":
+                    StartCrossExamination(param); // Start cross-examination based on the tag
+                    break;
             }
         }
     }
@@ -314,34 +317,38 @@ public class DialogueManager : MonoBehaviour
 
     public void StartCrossExamination(string correctEvidence)
     {
-        inCrossExamination = true;
-        correctEvidenceID = correctEvidence;
-        AdvanceDialogue();
+        isInCrossExamination = true;
+        correctEvidenceName = correctEvidence;
+        Debug.Log("Cross-examination started!");
     }
-    
-    public void PresentEvidence(string evidenceID)
+
+    public void PresentEvidence(Evidence evidence)
     {
-        if(!inCrossExamination)
+        if (isInCrossExamination)
         {
-            Debug.LogWarning("Not in cross-examination mode!");
-            return;
-        }
-
-        story.variablesState["presentEvidence"] = evidenceID;
-
-        if (evidenceID == correctEvidenceID)
-        {
-            inCrossExamination = false;
-            story.ChoosePathString("cross_examination_success");
-        }
-        else
-        {
-            AdvanceDialogue();
+            if (isCorrectEvidence(evidence))
+            {
+                ContinueCrossExamination();
+            }
+            else
+            {
+                HandleIncorrectEvidence();
+            }
         }
     }
 
-    public void TriggerCrossExamination()
+    private void HandleIncorrectEvidence()
     {
-        StartCrossExamination("bloody_knife");
+        throw new NotImplementedException();
+    }
+
+    private void ContinueCrossExamination()
+    {
+        throw new NotImplementedException();
+    }
+
+    private bool isCorrectEvidence(Evidence evidence)
+    {
+        return false;
     }
 }
