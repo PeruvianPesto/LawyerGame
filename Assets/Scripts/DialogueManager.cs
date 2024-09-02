@@ -16,7 +16,7 @@ public class DialogueManager : MonoBehaviour
     public bool isTalking = false; // Flag indicating if dialogue is currently happening
     private Transform lastFocusedCharacter;
 
-    public string correctEvidenceName;
+    public string expectedEvidenceName;
     public bool isInCrossExamination = false;
 
     static Story story; // Reference to the Ink story object
@@ -185,7 +185,7 @@ public class DialogueManager : MonoBehaviour
                     SetSpeakerName(param); // Set speaker name based on the tag
                     break;
                 case "cross_examination":
-                    StartCrossExamination(param); // Start cross-examination based on the tag
+                    HandleCrossExamination(param); // Start cross-examination based on the tag
                     break;
             }
         }
@@ -315,12 +315,51 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    private void HandleCrossExamination(string evidenceName)
+    {
+        // Start cross-examination with the provided evidence
+        isInCrossExamination = true;
+        expectedEvidenceName = evidenceName;
+
+        // Log for debugging or additional handling
+        Debug.Log($"Cross-examination started! Evidence: {evidenceName}");
+    }
+
     public void StartCrossExamination(string correctEvidence)
     {
         isInCrossExamination = true;
-        correctEvidenceName = correctEvidence;
+        expectedEvidenceName = correctEvidence;
         Debug.Log("Cross-examination started!");
+
+        // Choose the path for cross-examination
+        story.ChoosePathString("CrossExaminationStart");
+        StartCoroutine(RepeatCrossExaminationDialogue());
     }
+
+
+    private IEnumerator RepeatCrossExaminationDialogue()
+    {
+        while (isInCrossExamination)
+        {
+            if (story.canContinue)
+            {
+                string currentSentence = story.Continue();
+                StopAllCoroutines();
+                StartCoroutine(TypeSentence(currentSentence));
+
+                // Wait for player to present the correct evidence
+                yield return new WaitUntil(() => !isInCrossExamination); // Wait until cross-examination is not active
+            }
+            else
+            {
+                yield return new WaitForSeconds(2f); // Adjust timing as needed
+            }
+
+            // Automatically go back to the start of cross-examination
+            story.ChoosePathString("CrossExaminationStart");
+        }
+    }
+
 
     public void PresentEvidence(Evidence evidence)
     {
@@ -339,16 +378,33 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleIncorrectEvidence()
     {
-        throw new NotImplementedException();
+        Debug.Log("Incorrect evidence presented.");
+        // You can play a specific dialogue or handle incorrect evidence here
+        // For example, jump to the Incorrect Answer node in the Ink file
+
+        story.ChoosePathString("Incorrect Answer");
+        StartCoroutine(WaitAndLoopBackToCrossExamination());
+
     }
+
+    private IEnumerator WaitAndLoopBackToCrossExamination()
+    {
+        yield return new WaitForSeconds(2f); // Adjust timing as needed for the incorrect answer feedback
+                                             // Return to the beginning of the cross-examination
+        story.ChoosePathString("CrossExaminationStart");
+    }
+
 
     private void ContinueCrossExamination()
     {
-        throw new NotImplementedException();
+        Debug.Log("Correct evidence presented.");
+        // Continue the cross-examination process
+        isInCrossExamination = false; // End cross-examination
     }
 
     private bool isCorrectEvidence(Evidence evidence)
     {
-        return false;
+        return evidence.name.Equals(expectedEvidenceName, StringComparison.OrdinalIgnoreCase);
     }
+
 }
