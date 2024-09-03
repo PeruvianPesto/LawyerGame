@@ -365,6 +365,9 @@ public class DialogueManager : MonoBehaviour
     {
         if (isInCrossExamination)
         {
+            Debug.Log($"Presented Evidence: {evidence.name}");
+            Debug.Log($"Expected Evidence: {expectedEvidenceName}");
+
             if (isCorrectEvidence(evidence))
             {
                 ContinueCrossExamination();
@@ -381,8 +384,7 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("Incorrect evidence presented.");
         // You can play a specific dialogue or handle incorrect evidence here
         // For example, jump to the Incorrect Answer node in the Ink file
-
-        story.ChoosePathString("Incorrect Answer");
+        story.ChoosePathString("IncorrectAnswer");
         StartCoroutine(WaitAndLoopBackToCrossExamination());
 
     }
@@ -391,6 +393,7 @@ public class DialogueManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f); // Adjust timing as needed for the incorrect answer feedback
                                              // Return to the beginning of the cross-examination
+        Debug.Log("Returning to cross-examination start.");                                
         story.ChoosePathString("CrossExaminationStart");
     }
 
@@ -400,11 +403,25 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("Correct evidence presented.");
         // Continue the cross-examination process
         isInCrossExamination = false; // End cross-examination
+        story.ChoosePathString("CorrectAnswer");
+        AdvanceDialogue();
     }
 
     private bool isCorrectEvidence(Evidence evidence)
     {
-        return evidence.name.Equals(expectedEvidenceName, StringComparison.OrdinalIgnoreCase);
+        // Check for nulls and log the comparison details
+        if (evidence == null)
+        {
+            Debug.LogWarning("No evidence provided for comparison.");
+            return false;
+        }
+
+        bool isCorrect = evidence.name.Equals(expectedEvidenceName, StringComparison.OrdinalIgnoreCase);
+
+        // Log the result of the comparison
+        Debug.Log($"Evidence check: {evidence.name} vs {expectedEvidenceName} - Correct: {isCorrect}");
+
+        return isCorrect;
     }
 
 }

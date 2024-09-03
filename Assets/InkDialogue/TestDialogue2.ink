@@ -28,7 +28,7 @@ The prosecution is ready, your Honor!
 #speaker Prosecutor
 I would also like to add evidence to the court.
 
-#addingevidence "Knife" "Sprites/Test" "This is a knife"
+#addingevidence Knife "Sprites/Test" This is a knife
 #speaker 
 Added Knife to court Record 
 
@@ -64,7 +64,7 @@ I am lying here; please contradict me with the knife.
 #color white
 So it could not be me.
 
-#speaker Witness
+#speaker Lawyer
 #anim think
 #color blue
 Is he really telling the truth?
@@ -76,7 +76,7 @@ Is he really telling the truth?
 #color white
 Lawyer! Make sure not to present wrong evidence or I will penalize you!
 
-->CrossExaminationStart
+->END
 
 ===CorrectAnswer
 #speaker Lawyer

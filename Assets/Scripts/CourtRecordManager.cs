@@ -118,6 +118,7 @@ public class CourtRecordManager : MonoBehaviour
             if (selectedEvidence != null)
             {
                 dialogueManager.PresentEvidence(selectedEvidence);
+                Debug.Log("Presenting evidence: " + selectedEvidence.name);
             }
         }
     }
