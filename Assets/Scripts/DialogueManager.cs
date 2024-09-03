@@ -184,11 +184,21 @@ public class DialogueManager : MonoBehaviour
                 case "speaker":
                     SetSpeakerName(param); // Set speaker name based on the tag
                     break;
-                case "cross_examination":
+                case "cross_examination_start":
+                    HandleCrossExaminationTrigger();
+                    Debug.Log("Cross-examination started!");
+                    break;
+                case "correct_evidence":
                     HandleCrossExamination(param); // Start cross-examination based on the tag
                     break;
             }
         }
+    }
+
+    private void HandleCrossExaminationTrigger()
+    {
+        isInCrossExamination = true;
+        Debug.Log("Cross-examination mode active.");
     }
 
     private void SetSpeakerName(string name)
@@ -317,21 +327,14 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleCrossExamination(string evidenceName)
     {
-        // Start cross-examination with the provided evidence
-        isInCrossExamination = true;
         expectedEvidenceName = evidenceName;
-
-        // Log for debugging or additional handling
-        Debug.Log($"Cross-examination started! Evidence: {evidenceName}");
     }
 
-    public void StartCrossExamination(string correctEvidence)
+    public void StartCrossExamination()
     {
         isInCrossExamination = true;
-        expectedEvidenceName = correctEvidence;
         Debug.Log("Cross-examination started!");
 
-        // Choose the path for cross-examination
         story.ChoosePathString("CrossExaminationStart");
         StartCoroutine(RepeatCrossExaminationDialogue());
     }
@@ -347,15 +350,13 @@ public class DialogueManager : MonoBehaviour
                 StopAllCoroutines();
                 StartCoroutine(TypeSentence(currentSentence));
 
-                // Wait for player to present the correct evidence
-                yield return new WaitUntil(() => !isInCrossExamination); // Wait until cross-examination is not active
+                yield return new WaitUntil(() => !isInCrossExamination);
             }
             else
             {
-                yield return new WaitForSeconds(2f); // Adjust timing as needed
+                yield return new WaitForSeconds(2f);
             }
 
-            // Automatically go back to the start of cross-examination
             story.ChoosePathString("CrossExaminationStart");
         }
     }
@@ -382,18 +383,15 @@ public class DialogueManager : MonoBehaviour
     private void HandleIncorrectEvidence()
     {
         Debug.Log("Incorrect evidence presented.");
-        // You can play a specific dialogue or handle incorrect evidence here
-        // For example, jump to the Incorrect Answer node in the Ink file
         story.ChoosePathString("IncorrectAnswer");
+        AdvanceDialogue();
         StartCoroutine(WaitAndLoopBackToCrossExamination());
-
     }
 
     private IEnumerator WaitAndLoopBackToCrossExamination()
     {
-        yield return new WaitForSeconds(2f); // Adjust timing as needed for the incorrect answer feedback
-                                             // Return to the beginning of the cross-examination
-        Debug.Log("Returning to cross-examination start.");                                
+        yield return new WaitForSeconds(2f);
+        Debug.Log("Returning to cross-examination start.");
         story.ChoosePathString("CrossExaminationStart");
     }
 
@@ -401,15 +399,13 @@ public class DialogueManager : MonoBehaviour
     private void ContinueCrossExamination()
     {
         Debug.Log("Correct evidence presented.");
-        // Continue the cross-examination process
-        isInCrossExamination = false; // End cross-examination
+        isInCrossExamination = false;
         story.ChoosePathString("CorrectAnswer");
         AdvanceDialogue();
     }
 
     private bool isCorrectEvidence(Evidence evidence)
     {
-        // Check for nulls and log the comparison details
         if (evidence == null)
         {
             Debug.LogWarning("No evidence provided for comparison.");
@@ -418,7 +414,6 @@ public class DialogueManager : MonoBehaviour
 
         bool isCorrect = evidence.name.Equals(expectedEvidenceName, StringComparison.OrdinalIgnoreCase);
 
-        // Log the result of the comparison
         Debug.Log($"Evidence check: {evidence.name} vs {expectedEvidenceName} - Correct: {isCorrect}");
 
         return isCorrect;

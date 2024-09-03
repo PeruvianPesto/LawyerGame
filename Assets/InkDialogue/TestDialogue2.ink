@@ -50,14 +50,15 @@ Not yet, Your Honor!
 (Let me see...)
 ->Begin
 
-=== CrossExaminationStart
+=== CrossExaminationStart 
 #speaker Witness
+#cross_examination_start
 #color white
 I have never touched that knife ever!
 
 #speaker Witness
 #color white
-#cross_examination Knife
+#correct_evidence Knife
 I am lying here; please contradict me with the knife.
 
 #speaker Witness
@@ -76,7 +77,7 @@ Is he really telling the truth?
 #color white
 Lawyer! Make sure not to present wrong evidence or I will penalize you!
 
-->END
+->CrossExaminationStart
 
 ===CorrectAnswer
 #speaker Lawyer
