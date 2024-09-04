@@ -119,6 +119,10 @@ public class CourtRecordManager : MonoBehaviour
             {
                 dialogueManager.PresentEvidence(selectedEvidence);
                 Debug.Log("Presenting evidence: " + selectedEvidence.name);
+
+                // Close the Court Record after presenting the evidence
+                ToggleCourtRecord(); // This will set isCourtRecordOpen to false and hide the panel
+                dialogueManager.ResumeDialogue(); // Optionally, resume dialogue if needed
             }
         }
     }
