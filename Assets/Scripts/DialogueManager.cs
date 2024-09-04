@@ -67,7 +67,17 @@ public class DialogueManager : MonoBehaviour
 
     private void FinishDialogue()
     {
-        Debug.Log("End of conversation!");
+        //Debug.Log("End of conversation!");
+
+        // Keep the camera focused on the last character who spoke
+        if (lastFocusedCharacter != null)
+        {
+            CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
+            if (cameraFocus != null)
+            {
+                cameraFocus.FocusOnCharacter(lastFocusedCharacter);
+            }
+        }
     }
 
     void AdvanceDialogue()
@@ -205,12 +215,11 @@ public class DialogueManager : MonoBehaviour
     {
         nametag.text = name;
 
-        // Handle the case where the #speaker tag is followed by a blank
         if (string.IsNullOrWhiteSpace(name))
         {
+            // Continue focusing on the last focused character
             if (lastFocusedCharacter != null)
             {
-                // Focus on the last character the camera was focused on
                 CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
                 if (cameraFocus != null)
                 {
@@ -224,10 +233,8 @@ public class DialogueManager : MonoBehaviour
         GameObject speakerObject = GameObject.Find(name);
         if (speakerObject != null)
         {
-            // Update last focused character
             lastFocusedCharacter = speakerObject.transform;
 
-            // Set the camera to focus on the current speaker
             CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
             if (cameraFocus != null)
             {
@@ -290,22 +297,9 @@ public class DialogueManager : MonoBehaviour
 
     void SetAnimation(string animationName)
     {
-        // Assuming each character has a CharacterScript attached to their GameObject
-        CharacterScript currentSpeaker = GameObject.FindObjectOfType<CharacterScript>();
-        currentSpeaker.PlayAnimation(animationName);
-
-        // Ensure the camera focuses on the character only if they are talking
-        if (currentSpeaker.isTalking)
-        {
-            // Set the camera to focus on the current speaker
-            CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
-            if (cameraFocus != null)
-            {
-                cameraFocus.FocusOnCharacter(currentSpeaker.transform);
-            }
-        }
+        CharacterScript cs = GameObject.FindObjectOfType<CharacterScript>();
+        cs.PlayAnimation(animationName);
     }
-
     // Method to pause the dialogue
     public void PauseDialogue()
     {
