@@ -22,10 +22,12 @@ The defense is ready, Your Honor!
 
 #color white
 #speaker Prosecutor
+#anim talk
 The prosecution is ready, your Honor!
 
 #color white
 #speaker Prosecutor
+#anim talk
 I would also like to add evidence to the court.
 
 #addingevidence Knife "Sprites/Test" This is a knife
