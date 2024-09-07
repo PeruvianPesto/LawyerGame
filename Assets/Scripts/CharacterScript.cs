@@ -28,6 +28,12 @@ public class CharacterScript : MonoBehaviour
             case "think":
                 anim.SetTrigger("toThink"); // Set trigger for thinking animation
                 break;
+            case "shock":
+                anim.SetTrigger("toShock"); // Set trigger for shock animation
+                break;
+            case "anger":
+                anim.SetTrigger("toAnger"); // Set trigger for anger animation
+                break;
         }
     }
 }

@@ -117,13 +117,13 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: toTalk
+  - m_Name: toThink
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: toThink
+  - m_Name: toTalk
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0

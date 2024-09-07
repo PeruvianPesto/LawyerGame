@@ -36,6 +36,7 @@ Added Knife to court Record
 
 #color white
 #speaker Judge
+#anim talk
 Let the witness speak!
 
 ->CrossExaminationStart
@@ -77,6 +78,7 @@ Is he really telling the truth?
 === IncorrectAnswer
 #speaker Judge
 #color white
+#anim anger
 Lawyer! Make sure not to present wrong evidence or I will penalize you!
 
 ->CrossExaminationStart
@@ -84,6 +86,7 @@ Lawyer! Make sure not to present wrong evidence or I will penalize you!
 ===CorrectAnswer
 #speaker Lawyer
 #color white
+#anim talk
 Objection! This contradicts your statement!
 
 -> END
