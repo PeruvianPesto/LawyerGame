@@ -1,9 +1,9 @@
 -> Begin
 
 === Begin
-#anim think
 #color blue
 #speaker Lawyer
+#anim think
 #addingevidence "Badge" "Sprites/Test" "A badge"
 (Am I really ready?)
 + [Yes] -> Ready

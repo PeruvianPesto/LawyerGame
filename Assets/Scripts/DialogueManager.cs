@@ -15,6 +15,7 @@ public class DialogueManager : MonoBehaviour
     public GameObject optionPanel; // Panel containing choice buttons
     public bool isTalking = false; // Flag indicating if dialogue is currently happening
     private Transform lastFocusedCharacter;
+    private CharacterScript currentSpeaker;
 
     public string expectedEvidenceName;
     public bool isInCrossExamination = false;
@@ -110,15 +111,21 @@ public class DialogueManager : MonoBehaviour
             yield return new WaitForSeconds(typingSpeed);
         }
 
-        // Get reference to the character currently speaking
-        CharacterScript tempSpeaker = GameObject.FindObjectOfType<CharacterScript>();
-
         // Set the character's animation to idle after they finish talking
-        if (tempSpeaker.isTalking)
-        {
-            SetAnimation("idle");
-        }
+        SetAnimation("idle");
         yield return null;
+    }
+
+    private IEnumerator SetIdleAfterTalking()
+    {
+        // Assuming the talking animation has a certain duration or needs to wait for the sentence to finish.
+        // Adjust the wait time if needed to match your talk animation duration
+        yield return new WaitForSeconds(0.5f); // Adjust this wait time as per your animation length
+
+        if (currentSpeaker != null)
+        {
+            currentSpeaker.PlayAnimation("idle");
+        }
     }
 
     IEnumerator ShowChoices()
@@ -235,6 +242,13 @@ public class DialogueManager : MonoBehaviour
         {
             lastFocusedCharacter = speakerObject.transform;
 
+            // Get the CharacterScript of the speaker and store it
+            currentSpeaker = speakerObject.GetComponent<CharacterScript>();
+            if (currentSpeaker == null)
+            {
+                Debug.LogWarning($"CharacterScript not found on GameObject '{name}'");
+            }
+
             CameraFocus cameraFocus = Camera.main.GetComponent<CameraFocus>();
             if (cameraFocus != null)
             {
@@ -297,8 +311,21 @@ public class DialogueManager : MonoBehaviour
 
     void SetAnimation(string animationName)
     {
-        CharacterScript cs = GameObject.FindObjectOfType<CharacterScript>();
-        cs.PlayAnimation(animationName);
+        if (currentSpeaker != null)
+        {
+            // Play the animation only if the current speaker is set
+            currentSpeaker.PlayAnimation(animationName);
+
+            // If the character finishes talking, switch back to idle after the talk animation
+            if (animationName == "talk")
+            {
+                StartCoroutine(SetIdleAfterTalking());
+            }
+        }
+        /*else
+        {
+            Debug.LogWarning("No current speaker is set for animations.");
+        }*/
     }
     // Method to pause the dialogue
     public void PauseDialogue()
