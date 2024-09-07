@@ -170,7 +170,7 @@ ScriptedImporter:
     layerType: 0
     blendMode: 0
     cells:
-    - name: Judge
+    - name: Judge_Frame_0
       frameIndex: 0
       cellRect:
         x: 5
@@ -178,6 +178,62 @@ ScriptedImporter:
         width: 21
         height: 35
       spriteId: e5c49a75885e7df4797b208ded894a3d
+    - name: Judge_Frame_1
+      frameIndex: 1
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 35
+      spriteId: ed297e28a3d5fd3408638ceb7776317e
+    - name: Judge_Frame_2
+      frameIndex: 2
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 35
+      spriteId: e13304f6b04ab364585990f65571409a
+    - name: Judge_Frame_3
+      frameIndex: 3
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 35
+      spriteId: 4dd6e6b2bb05050409950186cb88e501
+    - name: Judge_Frame_4
+      frameIndex: 4
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 35
+      spriteId: 8ee607c427901e74698ecbf62640b260
+    - name: Judge_Frame_5
+      frameIndex: 5
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 35
+      spriteId: 3e25e81eb50e3bf458c86de0cc144bf5
+    - name: Judge_Frame_6
+      frameIndex: 6
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 35
+      spriteId: 4453cd15003d6f54a98d18b2b9b4f0db
+    - name: Judge_Frame_7
+      frameIndex: 7
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 35
+      spriteId: bea5bb96811eb9f439106245ccb7a441
     linkedCells: []
     parentIndex: -1
   platformSettings:
