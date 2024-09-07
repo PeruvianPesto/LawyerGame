@@ -521,6 +521,7 @@ GameObject:
   - component: {fileID: 525438103}
   - component: {fileID: 525438102}
   - component: {fileID: 525438104}
+  - component: {fileID: 525438105}
   m_Layer: 0
   m_Name: Judge
   m_TagString: Untagged
@@ -569,7 +570,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7005877650561056471, guid: c17748c5432bda64cb3a91a2c8dcfba3, type: 3}
+  m_Sprite: {fileID: -1653921230, guid: 678e1df2f2419d14b8d764e865a857e8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -616,6 +617,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &525438105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525438099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e61f0ef22fb5ef479f626489c8e6951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 525438104}
+  isTalking: 0
 --- !u!1 &525712592
 GameObject:
   m_ObjectHideFlags: 0
